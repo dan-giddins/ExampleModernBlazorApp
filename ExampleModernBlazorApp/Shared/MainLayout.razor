@@ -1,0 +1,37 @@
+﻿@inherits LayoutComponentBase
+
+<PageTitle>Example App</PageTitle>
+
+<div class="d-flex flex-column page min-vh-100">
+	<header class="d-flex bg-light">
+		<div id="logo-div">
+			<a href="/">
+				<img id="logo-img"
+					 src="/img/logo.svg"
+					 alt="Logo"
+					 title="Logo" />
+			</a>
+		</div>
+		<div class="me-auto">
+			<h1 class="mx-3 mt-2 pt-1 mb-0 fw-bold">Example App</h1>
+		</div>
+		<div>
+			<LoginDisplay />
+		</div>
+	</header>
+	<main class="d-flex flex-fill">
+		<div class="bg-light">
+			<NavMenu />
+		</div>
+		<div class="bg-light w-100">
+			<div class="bg-white h-100 rounded-start">
+			<article class="content p-3">
+				@Body
+			</article>
+			</div>
+		</div>
+	</main>
+	<footer class="text-center p-2 mt-auto bg-light">
+		Example App © Dan @DateTime.Now.Year
+	</footer>
+</div>

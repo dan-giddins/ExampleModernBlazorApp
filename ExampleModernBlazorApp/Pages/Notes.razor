@@ -1,0 +1,145 @@
+﻿@page "/things"
+@using Microsoft.Azure.Cosmos
+@using ExampleModernBlazorApp.Dtos
+@using ExampleModernBlazorApp.Services
+@using ExampleModernBlazorApp.Common
+@inject ExampleService ExampleService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<PageTitle>Things</PageTitle>
+
+<div class="alert-div @(AlertDisplay ? "fade-in" : "fade-out")">
+	@Alert
+</div>
+@if (ThingList is not null)
+{
+	<button type="button"
+		class="btn btn-outline-primary mb-1"
+		@onclick="() => AddThing()">
+		<i class="bi bi-plus-square me-1"></i>New Thing
+	</button>
+	<table class="table">
+		<thead>
+			<tr class="border-dark">
+				<th scope="col"><label for="title">Title</label></th>
+				<th scope="col"><label for="body">Body</label></th>
+				<th scope="col">Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var thing in ThingList)
+			{
+				<tr>
+					<td>@thing.Title</td>
+					<td>@thing.Body</td>
+					<td>
+						<div class="container">
+							<div class="row">
+								<button class="btn btn-outline-primary col me-1"
+								onclick="@(() => EditThing(thing))">
+									<i class="bi bi-pencil-square me-1"></i>Edit
+								</button>
+								<button class="btn btn-outline-danger col ms-1"
+								onclick="@(async () => await Remove(thing))">
+									<i class="bi bi-x-square me-1"></i>Remove
+								</button>
+							</div>
+						</div>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+	<AddModal @ref="AddModal" List="@ThingList" UpdateExamplePage="@UpdatePage"></AddModal>
+	<EditModal @ref="EditModal" UpdateExamplePage="@UpdatePage"></EditModal>
+}
+
+@code {
+	private IList<ExampleDto>? ThingList;
+	private string? Title { get; set; }
+	private string? Body { get; set; }
+	private RenderFragment? Alert;
+	private EditModal? EditModal { get; set; }
+	private AddModal? AddModal { get; set; }
+	private bool AlertDisplay = false;
+
+	protected async override Task OnInitializedAsync()
+	{
+		ShowNotification(
+			AlertCommon.AlertInfo(
+				"Loading things..."));
+		await Task.Run(async () =>
+		{
+			var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+			ExampleService.SetUserGuid(
+				authenticationState?.User
+					?.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier")
+					?.Value ?? throw new Exception("Cannot get the current user's GUID."));
+			ThingList = ExampleService.GetAll();
+			UpdatePage(
+				AlertCommon.AlertInfo(
+					"Things loaded."));
+		});
+	}
+
+	private void Sort() =>
+		ThingList = ThingList?.OrderBy(x => x.Title).ToList();
+
+	private void EditThing(ExampleDto thing)
+	{
+		EditModal?.SetThing(thing);
+		EditModal?.Open();
+	}
+
+	private void AddThing()
+	{
+		AddModal?.Open();
+	}
+
+	public async void UpdatePage(RenderFragment? notification = null)
+	{
+		await InvokeAsync(() =>
+		{
+			if (notification is not null)
+			{
+				ShowNotification(notification);
+			}
+			Sort();
+			StateHasChanged();
+		});
+	}
+
+	private async Task Remove(ExampleDto thing)
+	{
+		await ExampleService.Delete(thing);
+		this.ThingList?.Remove(thing);
+		UpdatePage(
+			AlertCommon.AlertSuccess(
+				$"Thing '{thing.Title}, {thing.Body}' removed."));
+	}
+
+	private async void ShowNotification(RenderFragment? renderFragment)
+	{
+		if (renderFragment is null)
+		{
+			HideAlert();
+			return;
+		}
+		Alert = renderFragment;
+		ShowAlert();
+		await Task.Delay(2000);
+		HideAlert();
+	}
+
+	private void HideAlert()
+	{
+		AlertDisplay = false;
+		UpdatePage();
+	}
+
+	private void ShowAlert()
+	{
+		AlertDisplay = true;
+		UpdatePage();
+	}
+}

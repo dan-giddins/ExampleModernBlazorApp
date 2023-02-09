@@ -1,0 +1,112 @@
+@using ExampleModernBlazorApp.Dtos
+@using ExampleModernBlazorApp.Services
+@using ExampleModernBlazorApp.Common
+@using Microsoft.Azure.Cosmos
+
+@inject ExampleService ExampleService
+
+﻿<div class="modal @(ModalDisplay ? "d-block" : "d-none")" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content bg-light">
+			<div class="modal-header">
+				<h5 class="modal-title">Edit Thing</h5>
+				<button type="button"
+						class="btn-close"
+						data-bs-dismiss="modal"
+						aria-label="Close"
+						@onclick="() => Close()">
+				</button>
+			</div>
+			<div class="modal-body">
+				@Alert
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col my-1">
+							<input id="title"
+								   class="form-control"
+								   @bind="Thing.Title"
+								   @bind:event="oninput"
+								   placeholder="Title" />
+						</div>
+					</div>
+					<div class="row">
+						<div class="col my-1">
+							<textarea id="body"
+									  class="form-control"
+									  @bind="Thing.Body"
+									  @bind:event="oninput"
+									  placeholder="Body">
+							</textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button"
+						class="btn btn-primary"
+						onclick="@(async () => await Patch())">
+					Save changes
+				</button>
+				<button type="button"
+						class="btn btn-secondary"
+						data-dismiss="modal"
+						onclick="@(async () => await Close())">
+					Close
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal-backdrop @(ModalDisplay ? "fade show" : "d-none")"></div>
+
+@code {
+	[Parameter]
+	public EventCallback<RenderFragment> UpdateExamplePage { get; set; }
+	private bool ModalDisplay = false;
+	private ExampleDto Thing = new ExampleDto(string.Empty, string.Empty, string.Empty);
+	private RenderFragment? Alert;
+
+	public void Open()
+	{
+		ModalDisplay = true;
+		StateHasChanged();
+	}
+
+	public bool IsOpen()
+	{
+		return ModalDisplay;
+	}
+
+	public async Task Close(RenderFragment? notification = null)
+	{
+		ModalDisplay = false;
+		await UpdateExamplePage.InvokeAsync(notification);
+	}
+
+	public void SetThing(ExampleDto thing)
+	{
+		Thing = thing;
+	}
+
+	private async Task Patch()
+	{
+		if (string.IsNullOrWhiteSpace(Thing.Title))
+		{
+			Alert = AlertCommon.AlertDanger(
+				"Title cannot be blank.");
+			return;
+		}
+		if (string.IsNullOrWhiteSpace(Thing.Body))
+		{
+			Alert = AlertCommon.AlertDanger(
+				"Body cannot be blank.");
+			return;
+		}
+		await ExampleService.Patch(
+			Thing
+		);
+		await Close(
+			AlertCommon.AlertInfo(
+				"Thing updated successfully."));
+	}
+}
