@@ -9,16 +9,22 @@ namespace ExampleModernBlazorApp.Services
 		private readonly Container Container;
 		private string UserGuid = string.Empty;
 
-		public ExampleService() =>
-			Container = CosmosCommon.GetContainer<ExampleDto>();
+		//public ExampleService() =>
+		//	Container = CosmosCommon.GetContainer<ExampleDto>();
 
 		public void SetUserGuid(string userGuid) =>
 			UserGuid = userGuid;
 
 		public IList<ExampleDto> GetAll() =>
-			CosmosCommon.GetDataQueryable<ExampleDto>(Container)
-			.Where(x => x.UserGuid == UserGuid)
-			.ToList();
+			//return CosmosCommon.GetDataQueryable<ExampleDto>(Container)
+			//	.Where(x => x.UserGuid == UserGuid)
+			//	.ToList();
+			new List<ExampleDto>
+			{
+				new ExampleDto("title1", "body1", "0"),
+				new ExampleDto("title2", "body2", "0"),
+				new ExampleDto("title3", "body3", "0"),
+			};
 
 		public async Task Delete(ExampleDto thing) =>
 			await CosmosCommon.RemoveItem<ExampleDto>(

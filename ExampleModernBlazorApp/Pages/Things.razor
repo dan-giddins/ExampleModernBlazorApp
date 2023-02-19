@@ -50,7 +50,7 @@
 			}
 		</tbody>
 	</table>
-	<AddModal @ref="AddModal" List="@ThingList" UpdateExamplePage="@UpdatePage"></AddModal>
+	<AddModal @ref="AddModal" ThingList="@ThingList" UpdateExamplePage="@UpdatePage"></AddModal>
 	<EditModal @ref="EditModal" UpdateExamplePage="@UpdatePage"></EditModal>
 }
 
@@ -71,10 +71,10 @@
 		await Task.Run(async () =>
 		{
 			var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-			ExampleService.SetUserGuid(
-				authenticationState?.User
-					?.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier")
-					?.Value ?? throw new Exception("Cannot get the current user's GUID."));
+			//ExampleService.SetUserGuid(
+			//	authenticationState?.User
+			//		?.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier")
+			//		?.Value ?? throw new Exception("Cannot get the current user's GUID."));
 			ThingList = ExampleService.GetAll();
 			UpdatePage(
 				AlertCommon.AlertInfo(
