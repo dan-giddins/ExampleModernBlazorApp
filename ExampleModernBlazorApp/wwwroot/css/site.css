@@ -1,6 +1,9 @@
 :root {
-	--bs-border-radius: 1rem;
-	--bs-light-rgb: 240, 240, 240;
+	/*custom light theme rgb values*/
+	--light-1: 255, 255, 255;
+	--light-2: 240, 240, 240;
+	/*bs overrides*/
+	--bs-light-rgb: var(--light-2);
 }
 
 #blazor-error-ui {
@@ -23,13 +26,13 @@
 	}
 
 #logo-img {
-	height: 80px;
-	width: 80px;
+	height: 5em;
+	width: 5em;
 }
 
 #logo-div {
-	height: 80px;
-	width: 80px;
+	height: 5em;
+	width: 5em;
 	overflow: hidden;
 	border-bottom-right-radius: var(--bs-border-radius);
 }
@@ -38,7 +41,7 @@
 	margin-left: -0.5rem !important;
 }
 
-.nav-link {
+/*.nav-link {
 	border: 1px solid transparent !important;
 	border-radius: var(--bs-nav-pills-border-radius);
 	transition: border-color .15s, color .15s, background-color .15s;
@@ -54,7 +57,7 @@
 	.nav-link:focus,
 	.nav-link:hover {
 		color: var(--bs-nav-link-color);
-	}
+	}*/
 
 h1:focus-visible {
 	outline: none;
@@ -62,7 +65,7 @@ h1:focus-visible {
 
 .alert-div {
 	position: fixed;
-	top: 1em;
+	top: 0.6em;
 	left: 50%;
 	transform: translate(-50%, 0);
 }
