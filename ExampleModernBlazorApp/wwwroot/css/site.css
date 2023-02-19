@@ -81,29 +81,27 @@ h1:focus-visible {
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		--bs-body-color: white;
-		--bs-white-rgb: 32, 32, 32;
-		--bs-light-rgb: 40, 40, 40;
-		--bs-dark-rgb: 255, 255, 255;
-		--bs-border-color: grey;
+		/*custom dark theme rgb values*/
+		--dark-1: 32, 32, 32;
+		--dark-2: 48, 48, 48;
+		--dark-3: 64, 64, 64;
+		--light-1: 240, 240, 240;
+		/*bs overrides*/
+		--bs-body-color: rgb(var(--light-1));
+		--bs-white-rgb: var(--dark-1);
+		--bs-light-rgb: var(--dark-2);
+		--bs-dark-rgb: var(--light-1);
+		--bs-border-color: rgb(var(--dark-3));
+		--bs-body-bg: rgb(var(--dark-1));
 	}
 
-	.form-control {
-		background-color: rgb(var(--bs-white-rgb));
-		border-color: var(--bs-border-color);
-		color: var(--bs-body-color);
-	}
-
-		.form-control:focus {
-			background-color: rgb(var(--bs-light-rgb));
-			color: var(--bs-body-color);
-		}
-
+	/*swap colours*/
 	.alert {
 		background-color: var(--bs-alert-color);
 		color: var(--bs-alert-bg);
 	}
 
+	/*invert*/
 	.btn-close {
 		filter: invert(1) grayscale(100%) brightness(200%);
 	}
